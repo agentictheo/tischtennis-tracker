@@ -54,15 +54,15 @@ export default function Dashboard({ games, allGames, selectedPlayer }) {
         </div>
 
         {/* Win Rate Card */}
-        {selectedPlayer !== 'All' && (
+        {selectedPlayer !== 'All' && stats.summary[selectedPlayer] && (
           <div className="stat-card winrate-card">
             <div className="stat-icon">📈</div>
             <div className="stat-label">Win Rate</div>
-            <div className="stat-value">{stats.winRate}%</div>
+            <div className="stat-value">{stats.summary[selectedPlayer].winRate}%</div>
             <div className="win-rate-bar">
               <div 
                 className="win-rate-fill" 
-                style={{ width: `${stats.winRate}%` }}
+                style={{ width: `${stats.summary[selectedPlayer].winRate}%` }}
               />
             </div>
           </div>
@@ -142,36 +142,6 @@ export default function Dashboard({ games, allGames, selectedPlayer }) {
         </div>
       </section>
 
-      {/* Recent Games Section */}
-      <section className="recent-section">
-        <h2 className="section-title">🕐 Letzte 10 Spiele</h2>
-        <div className="recent-list">
-          {stats.last10.length > 0 ? (
-            stats.last10.map((game, idx) => (
-              <div key={game.id || idx} className="game-item">
-                <div className="game-date">{formatDate(game.date)}</div>
-                <div className="game-content">
-                  <div className="game-players">
-                    <span className={`player-name ${getWinner(game) === game.player1 ? 'winner' : ''}`}>
-                      {game.player1}
-                    </span>
-                    <div className="game-score">
-                      <span className="score-value">{game.score1}</span>
-                      <span className="score-separator">:</span>
-                      <span className="score-value">{game.score2}</span>
-                    </div>
-                    <span className={`player-name ${getWinner(game) === game.player2 ? 'winner' : ''}`}>
-                      {game.player2}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            ))
-          ) : (
-            <p className="empty-state">Keine Spiele noch</p>
-          )}
-        </div>
-      </section>
     </div>
   );
 }

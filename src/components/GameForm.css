@@ -143,31 +143,46 @@
   color: var(--dark-text-primary);
 }
 
-.loser-input {
-  padding: 0.75rem 1rem;
+.score-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+}
+
+.score-button {
+  padding: 0.75rem;
   border: 2px solid var(--border-color);
   border-radius: 8px;
-  font-size: 1rem;
-  font-weight: 600;
   background: var(--bg-primary);
   color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.dark-mode .loser-input {
+.dark-mode .score-button {
   background: var(--dark-bg-secondary);
   border-color: var(--dark-border-color);
   color: var(--dark-text-primary);
 }
 
-.loser-input:focus {
-  outline: none;
+.score-button:hover:not(:disabled) {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+  background: var(--primary);
+  color: white;
 }
 
-.dark-mode .loser-input:focus {
-  box-shadow: 0 0 0 3px rgba(31, 135, 232, 0.2);
+.score-button.selected {
+  border-color: var(--success);
+  background: var(--success);
+  color: white;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.score-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Form Group */

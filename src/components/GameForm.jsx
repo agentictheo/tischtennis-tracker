@@ -91,23 +91,25 @@ export default function GameForm({ onGameAdded }) {
           ))}
         </div>
 
-        {/* Loser Score Input */}
+        {/* Loser Score Buttons */}
         {winner && (
           <div className="loser-section">
             <label className="loser-label">
               Punkte für {loser}
             </label>
-            <input
-              type="number"
-              min="0"
-              max="10"
-              placeholder="0"
-              value={loserScore}
-              onChange={(e) => setLoserScore(e.target.value)}
-              disabled={loading}
-              className="loser-input"
-              autoFocus
-            />
+            <div className="score-buttons">
+              {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map(score => (
+                <button
+                  key={score}
+                  type="button"
+                  className={`score-button ${loserScore === String(score) ? 'selected' : ''}`}
+                  onClick={() => setLoserScore(String(score))}
+                  disabled={loading}
+                >
+                  {score}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
