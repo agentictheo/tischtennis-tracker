@@ -32,38 +32,24 @@ export const calculateStats = (games, allGames = null) => {
     });
   });
 
-  // König (most wins overall in all games)
-  const allWins = {};
-  const allTotals = {};
-  dataGames.forEach(game => {
-    const winner = getWinner(game);
-    allWins[winner] = (allWins[winner] || 0) + 1;
-    
-    [game.player1, game.player2].forEach(p => {
-      allTotals[p] = (allTotals[p] || 0) + 1;
-    });
-  });
-  
-  const king = Object.entries(allWins).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
-
-  // König seit (date king started their streak)
-  // Calculate from ALL games, not just filtered
+  // König = the player who won the most recent game
+  // Win Streak = consecutive wins from the most recent game backwards
+  let king = null;
   let kingsSince = null;
   let winstreak = 0;
 
-  if (king) {
-    // Count consecutive wins from the beginning (most recent games first)
+  if (dataGames.length > 0) {
+    // The most recent game winner is the König
+    king = getWinner(dataGames[0]);
+    kingsSince = dataGames[0]?.date;
+    
+    // Count consecutive wins from the most recent game backwards
     for (let i = 0; i < dataGames.length; i++) {
       if (getWinner(dataGames[i]) === king) {
         winstreak++;
       } else {
         break;
       }
-    }
-    
-    if (dataGames.length > 0 && winstreak > 0) {
-      const streakStartIdx = Math.min(winstreak - 1, dataGames.length - 1);
-      kingsSince = dataGames[streakStartIdx]?.date;
     }
   }
 
