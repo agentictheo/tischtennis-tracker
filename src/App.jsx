@@ -63,19 +63,6 @@ function App() {
               ))}
             </select>
             <button 
-              className="reset-button"
-              onClick={() => {
-                if (window.confirm('Alle Spieleinträge löschen? Das kann nicht rückgängig gemacht werden.')) {
-                  setGames([]);
-                  localStorage.removeItem('games');
-                  loadGames();
-                }
-              }}
-              title="Alle Spiele zurücksetzen"
-            >
-              🔄 Reset
-            </button>
-            <button 
               className="dark-mode-toggle"
               onClick={() => setDarkMode(!darkMode)}
               title={darkMode ? 'Light Mode' : 'Dark Mode'}
