@@ -1,0 +1,54 @@
+headersOrigin = "config"
+redirectsOrigin = "config"
+plugins = []
+
+[env]
+
+[env.production]
+
+[env.production.variables]
+NODE_ENV = "production"
+
+[functions]
+
+[functions."*"]
+
+[build]
+publish = "/home/Theo/.openclaw/workspace/tischtennis-tracker/dist"
+publishOrigin = "config"
+commandOrigin = "config"
+command = "npm run build"
+
+[build.environment]
+
+[build.processing]
+
+[build.processing.css]
+
+[build.processing.html]
+
+[build.processing.images]
+
+[build.processing.js]
+
+[build.services]
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+X-Frame-Options = "SAMEORIGIN"
+X-Content-Type-Options = "nosniff"
+X-XSS-Protection = "1; mode=block"
+
+[[redirects]]
+from = "/*"
+to = "/index.html"
+status = 200.0
+force = false
+
+[redirects.query]
+
+[redirects.conditions]
+
+[redirects.headers]
