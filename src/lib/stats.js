@@ -47,21 +47,23 @@ export const calculateStats = (games, allGames = null) => {
   const king = Object.entries(allWins).sort((a, b) => b[1] - a[1])[0]?.[0] || null;
 
   // König seit (date king started their streak)
+  // Calculate from ALL games, not just filtered
   let kingsSince = null;
   let winstreak = 0;
 
   if (king) {
-    for (let i = 0; i < games.length; i++) {
-      if (getWinner(games[i]) === king) {
+    // Count consecutive wins from the beginning (most recent games first)
+    for (let i = 0; i < dataGames.length; i++) {
+      if (getWinner(dataGames[i]) === king) {
         winstreak++;
       } else {
         break;
       }
     }
     
-    if (games.length > 0) {
-      const streakStartIdx = Math.min(winstreak, games.length - 1);
-      kingsSince = games[streakStartIdx]?.date;
+    if (dataGames.length > 0 && winstreak > 0) {
+      const streakStartIdx = Math.min(winstreak - 1, dataGames.length - 1);
+      kingsSince = dataGames[streakStartIdx]?.date;
     }
   }
 
