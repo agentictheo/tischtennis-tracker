@@ -1,3 +1,9 @@
+// Helper function to get winner from game
+const getWinner = (game) => {
+  if (game.winner) return game.winner; // Fallback for old data
+  return game.score1 > game.score2 ? game.player1 : game.player2;
+};
+
 export const calculateStats = (games, allGames = null) => {
   const dataGames = allGames || games;
   
@@ -18,7 +24,7 @@ export const calculateStats = (games, allGames = null) => {
   const wins = {};
   const totals = {};
   games.forEach(game => {
-    const winner = game.winner;
+    const winner = getWinner(game);
     wins[winner] = (wins[winner] || 0) + 1;
     
     [game.player1, game.player2].forEach(p => {
@@ -30,7 +36,7 @@ export const calculateStats = (games, allGames = null) => {
   const allWins = {};
   const allTotals = {};
   dataGames.forEach(game => {
-    const winner = game.winner;
+    const winner = getWinner(game);
     allWins[winner] = (allWins[winner] || 0) + 1;
     
     [game.player1, game.player2].forEach(p => {
@@ -46,7 +52,7 @@ export const calculateStats = (games, allGames = null) => {
 
   if (king) {
     for (let i = 0; i < games.length; i++) {
-      if (games[i].winner === king) {
+      if (getWinner(games[i]) === king) {
         winstreak++;
       } else {
         break;
@@ -79,7 +85,7 @@ export const calculateStats = (games, allGames = null) => {
   const summary = {};
   allPlayers.forEach(player => {
     const playerGames = games.filter(g => g.player1 === player || g.player2 === player);
-    const playerWins = playerGames.filter(g => g.winner === player).length;
+    const playerWins = playerGames.filter(g => getWinner(g) === player).length;
     const playerLosses = playerGames.length - playerWins;
     const rate = playerGames.length > 0 ? Math.round((playerWins / playerGames.length) * 100) : 0;
     
@@ -108,8 +114,8 @@ export const calculateStats = (games, allGames = null) => {
         g => (g.player1 === p1 && g.player2 === p2) || (g.player1 === p2 && g.player2 === p1)
       );
       
-      const p1Wins = matchups.filter(g => g.winner === p1).length;
-      const p2Wins = matchups.filter(g => g.winner === p2).length;
+      const p1Wins = matchups.filter(g => getWinner(g) === p1).length;
+      const p2Wins = matchups.filter(g => getWinner(g) === p2).length;
       
       const key = `${p1} vs ${p2}`;
       headToHead[key] = {
