@@ -56,3 +56,46 @@ export const deleteGame = async (id) => {
     localStorage.setItem(DB_KEY, JSON.stringify(filtered));
   }
 };
+
+// FIFA Games
+const FIFA_DB_KEY = 'fifa_games';
+
+export const getFifaGames = async () => {
+  if (supabase) {
+    const { data, error } = await supabase.from('fifa_games').select('*').order('date', { ascending: false });
+    if (error) throw error;
+    return data || [];
+  }
+  return JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
+};
+
+export const saveFifaGame = async (game) => {
+  const now = new Date();
+  const gameData = {
+    id: Date.now().toString(),
+    ...game,
+    date: new Date(`${game.date}T${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`).toISOString(),
+  };
+
+  if (supabase) {
+    const { data, error } = await supabase.from('fifa_games').insert([gameData]);
+    if (error) throw error;
+    return data?.[0] || gameData;
+  }
+
+  const games = JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
+  games.unshift(gameData);
+  localStorage.setItem(FIFA_DB_KEY, JSON.stringify(games));
+  return gameData;
+};
+
+export const deleteFifaGame = async (id) => {
+  if (supabase) {
+    const { error } = await supabase.from('fifa_games').delete().eq('id', id);
+    if (error) throw error;
+  } else {
+    const games = JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
+    const filtered = games.filter(g => g.id !== id);
+    localStorage.setItem(FIFA_DB_KEY, JSON.stringify(filtered));
+  }
+};

@@ -299,6 +299,73 @@
   }
 }
 
+/* FIFA Form Styles */
+.fifa-score-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.fifa-player-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: 1rem;
+}
+
+.dark-mode .fifa-player-label {
+  color: var(--dark-text-primary);
+}
+
+.fifa-score-buttons {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+}
+
+.fifa-score-button {
+  padding: 0.6rem;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dark-mode .fifa-score-button {
+  background: var(--dark-bg-secondary);
+  border-color: var(--dark-border-color);
+  color: var(--dark-text-primary);
+}
+
+.fifa-score-button:hover:not(:disabled) {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: white;
+}
+
+.fifa-score-button.selected {
+  border-color: var(--success);
+  background: var(--success);
+  color: white;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+}
+
+.fifa-score-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fifa-vs {
+  text-align: center;
+  font-weight: 700;
+  color: var(--text-secondary);
+  padding: 0.5rem 0;
+  font-size: 1.1rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .game-form {
@@ -319,5 +386,9 @@
 
   .player-score {
     font-size: 1.5rem;
+  }
+
+  .fifa-score-buttons {
+    grid-template-columns: repeat(4, 1fr);
   }
 }

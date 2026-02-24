@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import GameForm from './components/GameForm';
+import FifaForm from './components/FifaForm';
 import Dashboard from './components/Dashboard';
-import { getGames } from './lib/supabase';
+import { getGames, getFifaGames } from './lib/supabase';
 import './App.css';
 
 function App() {
+  const [activeTab, setActiveTab] = useState('tischtennis');
   const [games, setGames] = useState([]);
+  const [fifaGames, setFifaGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
 
@@ -21,12 +24,29 @@ function App() {
     }
   };
 
+  const loadFifaGames = async () => {
+    try {
+      setLoading(true);
+      const data = await getFifaGames();
+      setFifaGames(data);
+    } catch (error) {
+      console.error('Error loading FIFA games:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     loadGames();
+    loadFifaGames();
   }, []);
 
   const handleGameAdded = () => {
     loadGames();
+  };
+
+  const handleFifaGameAdded = () => {
+    loadFifaGames();
   };
 
   return (
@@ -34,8 +54,8 @@ function App() {
       <header className="header">
         <div className="header-content">
           <div className="header-title">
-            <h1>🏓 Tischtennis Tracker</h1>
-            <p>Track your table tennis games and stats</p>
+            <h1>🎮 Game Tracker</h1>
+            <p>Track your games and stats</p>
           </div>
           <div className="header-controls">
             <button 
@@ -49,18 +69,45 @@ function App() {
         </div>
       </header>
 
+      {/* Tabs */}
+      <div className="tabs">
+        <button 
+          className={`tab ${activeTab === 'tischtennis' ? 'active' : ''}`}
+          onClick={() => setActiveTab('tischtennis')}
+        >
+          🏓 Tischtennis
+        </button>
+        <button 
+          className={`tab ${activeTab === 'fifa' ? 'active' : ''}`}
+          onClick={() => setActiveTab('fifa')}
+        >
+          ⚽ FIFA
+        </button>
+      </div>
+
       <main className="container">
-        <GameForm onGameAdded={handleGameAdded} />
-        {loading ? (
-          <div className="loading">Laden...</div>
-        ) : (
-          <Dashboard games={games} allGames={games} selectedPlayer="All" />
+        {activeTab === 'tischtennis' && (
+          <>
+            <GameForm onGameAdded={handleGameAdded} />
+            {loading ? (
+              <div className="loading">Laden...</div>
+            ) : (
+              <Dashboard games={games} allGames={games} selectedPlayer="All" />
+            )}
+          </>
+        )}
+
+        {activeTab === 'fifa' && (
+          <>
+            <FifaForm onGameAdded={handleFifaGameAdded} />
+            {loading ? (
+              <div className="loading">Laden...</div>
+            ) : (
+              <Dashboard games={fifaGames} allGames={fifaGames} selectedPlayer="All" isFifa={true} />
+            )}
+          </>
         )}
       </main>
-
-      <footer className="footer">
-        <p>Tischtennis Tracker 2026 | {games.length} Spiele</p>
-      </footer>
     </div>
   );
 }

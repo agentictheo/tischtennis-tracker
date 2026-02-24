@@ -41,6 +41,48 @@ html {
   scroll-behavior: smooth;
 }
 
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  border-bottom: 2px solid var(--border-color);
+  background: var(--bg-primary);
+}
+
+.dark-mode .tabs {
+  background: var(--dark-bg-secondary);
+  border-bottom-color: var(--dark-border-color);
+}
+
+.tab {
+  padding: 1rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tab:hover {
+  color: var(--text-primary);
+}
+
+.tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.dark-mode .tab.active {
+  color: var(--primary-light);
+  border-bottom-color: var(--primary-light);
+}
+
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
