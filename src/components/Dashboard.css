@@ -327,6 +327,37 @@
   color: var(--dark-text-light);
 }
 
+.h2h-quotes {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.h2h-quotes .quote {
+  color: var(--text-secondary);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  background: var(--bg-secondary);
+}
+
+.h2h-quotes .quote.lead {
+  color: var(--primary);
+  background: var(--primary-light);
+  color: white;
+}
+
+.app.dark-mode .h2h-quotes .quote {
+  background: var(--dark-bg-tertiary);
+  color: var(--dark-text-secondary);
+}
+
+.app.dark-mode .h2h-quotes .quote.lead {
+  background: var(--accent);
+  color: white;
+}
+
 .h2h-total {
   font-size: 0.8rem;
   color: var(--text-light);

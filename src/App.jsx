@@ -7,7 +7,6 @@ import './App.css';
 function App() {
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [selectedPlayer, setSelectedPlayer] = useState('All');
   const [darkMode, setDarkMode] = useState(false);
 
   const loadGames = async () => {
@@ -30,19 +29,6 @@ function App() {
     loadGames();
   };
 
-  // Extract unique players
-  const allPlayers = new Set();
-  games.forEach(game => {
-    allPlayers.add(game.player1);
-    allPlayers.add(game.player2);
-  });
-  const players = Array.from(allPlayers).sort();
-
-  // Filter games based on selected player
-  const filteredGames = selectedPlayer === 'All' 
-    ? games 
-    : games.filter(game => game.player1 === selectedPlayer || game.player2 === selectedPlayer);
-
   return (
     <div className={`app ${darkMode ? 'dark-mode' : ''}`}>
       <header className="header">
@@ -52,16 +38,6 @@ function App() {
             <p>Track your table tennis games and stats</p>
           </div>
           <div className="header-controls">
-            <select 
-              className="player-dropdown"
-              value={selectedPlayer}
-              onChange={(e) => setSelectedPlayer(e.target.value)}
-            >
-              <option value="All">All Players</option>
-              {players.map(player => (
-                <option key={player} value={player}>{player}</option>
-              ))}
-            </select>
             <button 
               className="dark-mode-toggle"
               onClick={() => setDarkMode(!darkMode)}
@@ -78,7 +54,7 @@ function App() {
         {loading ? (
           <div className="loading">Laden...</div>
         ) : (
-          <Dashboard games={filteredGames} allGames={games} selectedPlayer={selectedPlayer} />
+          <Dashboard games={games} allGames={games} selectedPlayer="All" />
         )}
       </main>
 

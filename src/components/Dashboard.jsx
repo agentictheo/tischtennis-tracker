@@ -53,21 +53,6 @@ export default function Dashboard({ games, allGames, selectedPlayer }) {
           <div className="stat-subtext">{stats.king ? `${stats.king}'s streak` : 'No streak'}</div>
         </div>
 
-        {/* Win Rate Card */}
-        {selectedPlayer !== 'All' && stats.summary[selectedPlayer] && (
-          <div className="stat-card winrate-card">
-            <div className="stat-icon">📈</div>
-            <div className="stat-label">Win Rate</div>
-            <div className="stat-value">{stats.summary[selectedPlayer].winRate}%</div>
-            <div className="win-rate-bar">
-              <div 
-                className="win-rate-fill" 
-                style={{ width: `${stats.summary[selectedPlayer].winRate}%` }}
-              />
-            </div>
-          </div>
-        )}
-
         {/* Total Games Card */}
         <div className="stat-card total-card">
           <div className="stat-icon">🏓</div>
@@ -78,11 +63,14 @@ export default function Dashboard({ games, allGames, selectedPlayer }) {
       </div>
 
       {/* Head-to-Head Section */}
-      {Object.keys(stats.headToHead).length > 0 && selectedPlayer === 'All' && (
+      {Object.keys(stats.headToHead).length > 0 && (
         <section className="h2h-section">
           <h2 className="section-title">🤝 Head-to-Head</h2>
           <div className="h2h-grid">
-            {Object.values(stats.headToHead).map((matchup) => (
+            {Object.values(stats.headToHead).map((matchup) => {
+              const p1Rate = matchup.total > 0 ? Math.round((matchup.p1Wins / matchup.total) * 100) : 0;
+              const p2Rate = matchup.total > 0 ? Math.round((matchup.p2Wins / matchup.total) * 100) : 0;
+              return (
               <div key={`${matchup.p1}-${matchup.p2}`} className="h2h-card">
                 <div className="h2h-players">
                   <span className="player">{matchup.p1}</span>
@@ -98,49 +86,17 @@ export default function Dashboard({ games, allGames, selectedPlayer }) {
                     {matchup.p2Wins}
                   </div>
                 </div>
+                <div className="h2h-quotes">
+                  <span className={`quote ${matchup.p1Wins > matchup.p2Wins ? 'lead' : ''}`}>{p1Rate}%</span>
+                  <span className={`quote ${matchup.p2Wins > matchup.p1Wins ? 'lead' : ''}`}>{p2Rate}%</span>
+                </div>
                 <div className="h2h-total">{matchup.total} games</div>
               </div>
-            ))}
+            );
+            })}
           </div>
         </section>
       )}
-
-      {/* Bilanz Section */}
-      <section className="bilanz-section">
-        <h2 className="section-title">📊 Bilanz {selectedPlayer !== 'All' ? `(${selectedPlayer})` : ''}</h2>
-        <div className="bilanz-table-wrapper">
-          {Object.entries(stats.summary).length > 0 ? (
-            <table className="bilanz-table">
-              <thead>
-                <tr>
-                  <th></th>
-                  <th>Spieler</th>
-                  <th>Siege</th>
-                  <th>Niederlagen</th>
-                  <th>Total</th>
-                  <th>Quote</th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(stats.summary)
-                  .sort((a, b) => b[1].wins - a[1].wins)
-                  .map(([player, data], idx) => (
-                    <tr key={player} className="bilanz-row">
-                      <td className="medal">{getMedalEmoji(idx)}</td>
-                      <td className="player-name">{player}</td>
-                      <td className="wins">{data.wins}</td>
-                      <td className="losses">{data.losses}</td>
-                      <td className="total">{data.total}</td>
-                      <td className="winrate">{data.winRate}%</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          ) : (
-            <p className="empty-state">Keine Spiele noch</p>
-          )}
-        </div>
-      </section>
 
     </div>
   );
