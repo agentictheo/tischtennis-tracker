@@ -26,10 +26,12 @@ export const getGames = async () => {
 };
 
 export const saveGame = async (game) => {
+  const now = new Date();
   const gameData = {
     id: Date.now().toString(),
     ...game,
-    date: new Date(game.date).toISOString(),
+    // Combine the date from form with current time to ensure proper ordering
+    date: new Date(`${game.date}T${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`).toISOString(),
   };
 
   if (supabase) {
