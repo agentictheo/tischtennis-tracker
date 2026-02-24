@@ -5,60 +5,55 @@ import './GameForm.css';
 const PLAYERS = ['Nicola', 'Janis'];
 
 export default function GameForm({ onGameAdded }) {
-  const [player1, setPlayer1] = useState('Nicola');
-  const [player2, setPlayer2] = useState('Janis');
-  const [score1, setScore1] = useState('');
-  const [score2, setScore2] = useState('');
+  const [winner, setWinner] = useState(null);
+  const [loserScore, setLoserScore] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+
+  const getLoser = () => {
+    return winner === 'Nicola' ? 'Janis' : 'Nicola';
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
 
-    if (!player1 || !player2 || !score1 || !score2) {
-      setError('Alle Felder sind erforderlich');
+    if (!winner) {
+      setError('Bitte wähle den Gewinner aus');
       return;
     }
 
-    if (player1.trim() === player2.trim()) {
-      setError('Spieler müssen unterschiedlich sein');
+    if (loserScore === '') {
+      setError('Bitte gib die Punkte des Verlierers ein');
       return;
     }
 
-    const s1 = parseInt(score1);
-    const s2 = parseInt(score2);
+    const score = parseInt(loserScore);
 
-    if (isNaN(s1) || isNaN(s2)) {
-      setError('Scores müssen Zahlen sein');
-      return;
-    }
-
-    if (s1 === s2) {
-      setError('Unentschieden nicht erlaubt');
+    if (isNaN(score) || score < 0 || score > 10) {
+      setError('Punkte müssen zwischen 0 und 10 sein');
       return;
     }
 
     setLoading(true);
     try {
+      const loser = getLoser();
       const game = {
         id: `game-${Date.now()}`,
-        player1: player1.trim(),
-        player2: player2.trim(),
-        score1: s1,
-        score2: s2,
+        player1: winner,
+        player2: loser,
+        score1: 11,
+        score2: score,
         date,
       };
 
       await saveGame(game);
       setSuccess(true);
-      setPlayer1('');
-      setPlayer2('');
-      setScore1('');
-      setScore2('');
+      setWinner(null);
+      setLoserScore('');
       setDate(new Date().toISOString().split('T')[0]);
       
       setTimeout(() => setSuccess(false), 3000);
@@ -70,82 +65,51 @@ export default function GameForm({ onGameAdded }) {
     }
   };
 
+  const loser = getLoser();
+
   return (
     <form onSubmit={handleSubmit} className="game-form">
       <div className="form-header">
         <h2>🎮 Neues Spiel</h2>
-        <p>Erfassen Sie eine neue Partie</p>
+        <p>Wer hat gewonnen?</p>
       </div>
 
       <div className="form-content">
-        {/* Player 1 Dropdown */}
-        <div className="form-group">
-          <label htmlFor="player1" className="form-label">Spieler 1</label>
-          <select
-            id="player1"
-            value={player1}
-            onChange={(e) => setPlayer1(e.target.value)}
-            disabled={loading}
-            className="form-input"
-          >
-            {PLAYERS.map(p => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
+        {/* Winner Selection */}
+        <div className="winner-selection">
+          {PLAYERS.map(player => (
+            <button
+              key={player}
+              type="button"
+              className={`player-button ${winner === player ? 'selected' : ''}`}
+              onClick={() => setWinner(player)}
+              disabled={loading}
+            >
+              <span className="player-name">{player}</span>
+              <span className="player-score">11</span>
+            </button>
+          ))}
         </div>
 
-        {/* Score Row */}
-        <div className="score-row">
-          <div className="form-group">
-            <label htmlFor="score1" className="form-label">Score</label>
+        {/* Loser Score Input */}
+        {winner && (
+          <div className="loser-section">
+            <label className="loser-label">
+              Punkte für {loser}
+            </label>
             <input
-              id="score1"
               type="number"
               min="0"
-              max="11"
-              placeholder="11"
-              value={score1}
-              onChange={(e) => setScore1(e.target.value)}
+              max="10"
+              placeholder="0"
+              value={loserScore}
+              onChange={(e) => setLoserScore(e.target.value)}
               disabled={loading}
-              className="form-input score-input"
+              className="loser-input"
+              autoFocus
             />
           </div>
-
-          <div className="vs-divider">
-            <span>vs</span>
-          </div>
-
-          <div className="form-group">
-            <label htmlFor="score2" className="form-label">Score</label>
-            <input
-              id="score2"
-              type="number"
-              min="0"
-              max="11"
-              placeholder="11"
-              value={score2}
-              onChange={(e) => setScore2(e.target.value)}
-              disabled={loading}
-              className="form-input score-input"
-            />
-          </div>
-        </div>
-
-        {/* Player 2 Dropdown */}
-        <div className="form-group">
-          <label htmlFor="player2" className="form-label">Spieler 2</label>
-          <select
-            id="player2"
-            value={player2}
-            onChange={(e) => setPlayer2(e.target.value)}
-            disabled={loading}
-            className="form-input"
-          >
-            {PLAYERS.map(p => (
-              <option key={p} value={p}>{p}</option>
-            ))}
-          </select>
-        </div>
+        )}
 
         {/* Date Input */}
         <div className="form-group">
@@ -160,32 +124,26 @@ export default function GameForm({ onGameAdded }) {
           />
         </div>
 
-        {/* Error Message */}
+        {/* Messages */}
         {error && (
-          <div className="form-message error-message">
-            <span className="message-icon">⚠️</span>
-            <span>{error}</span>
+          <div className="error-message">
+            ⚠️ {error}
           </div>
         )}
 
-        {/* Success Message */}
         {success && (
-          <div className="form-message success-message">
-            <span className="message-icon">✅</span>
-            <span>Spiel erfolgreich gespeichert!</span>
+          <div className="success-message">
+            ✅ Spiel gespeichert!
           </div>
         )}
 
         {/* Submit Button */}
-        <button 
-          type="submit" 
-          disabled={loading}
+        <button
+          type="submit"
+          disabled={loading || !winner || !loserScore}
           className="submit-button"
         >
-          <span className="button-icon">
-            {loading ? '⏳' : '💾'}
-          </span>
-          {loading ? 'Speicherung...' : 'Spiel speichern'}
+          {loading ? '⏳ Speichern...' : '💾 SPIEL SPEICHERN'}
         </button>
       </div>
     </form>
