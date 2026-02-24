@@ -533,12 +533,12 @@
 }
 
 .game-players .player-name.winner {
-  color: var(--primary);
-  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--text-primary);
 }
 
 .app.dark-mode .game-players .player-name.winner {
-  color: var(--accent-light);
+  color: var(--dark-text-primary);
 }
 
 .game-score {
@@ -578,15 +578,7 @@
 }
 
 .game-badge {
-  padding: 0.5rem 0.875rem;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  color: white;
-  border-radius: 20px;
-  font-size: 0.8rem;
-  font-weight: 600;
-  white-space: nowrap;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  display: none;
 }
 
 .app.dark-mode .game-badge {

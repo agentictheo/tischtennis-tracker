@@ -1,6 +1,11 @@
 import { calculateStats, formatDaysAgo } from '../lib/stats';
 import './Dashboard.css';
 
+const getWinner = (game) => {
+  if (game.winner) return game.winner;
+  return game.score1 > game.score2 ? game.player1 : game.player2;
+};
+
 export default function Dashboard({ games, allGames, selectedPlayer }) {
   const stats = calculateStats(games, allGames);
 
@@ -147,7 +152,7 @@ export default function Dashboard({ games, allGames, selectedPlayer }) {
                 <div className="game-date">{formatDate(game.date)}</div>
                 <div className="game-content">
                   <div className="game-players">
-                    <span className={`player-name ${game.winner === game.player1 ? 'winner' : ''}`}>
+                    <span className={`player-name ${getWinner(game) === game.player1 ? 'winner' : ''}`}>
                       {game.player1}
                     </span>
                     <div className="game-score">
@@ -155,15 +160,10 @@ export default function Dashboard({ games, allGames, selectedPlayer }) {
                       <span className="score-separator">:</span>
                       <span className="score-value">{game.score2}</span>
                     </div>
-                    <span className={`player-name ${game.winner === game.player2 ? 'winner' : ''}`}>
+                    <span className={`player-name ${getWinner(game) === game.player2 ? 'winner' : ''}`}>
                       {game.player2}
                     </span>
                   </div>
-                </div>
-                <div className="game-badge">
-                  {game.winner === game.player1 
-                    ? `${game.player1} wins` 
-                    : `${game.player2} wins`}
                 </div>
               </div>
             ))
