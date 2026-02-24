@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { saveGame } from '../lib/supabase';
 import './GameForm.css';
 
+const PLAYERS = ['Nicola', 'Janis'];
+
 export default function GameForm({ onGameAdded }) {
-  const [player1, setPlayer1] = useState('');
-  const [player2, setPlayer2] = useState('');
+  const [player1, setPlayer1] = useState('Nicola');
+  const [player2, setPlayer2] = useState('Janis');
   const [score1, setScore1] = useState('');
   const [score2, setScore2] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -42,13 +44,12 @@ export default function GameForm({ onGameAdded }) {
 
     setLoading(true);
     try {
-      const winner = s1 > s2 ? player1 : player2;
       const game = {
+        id: `game-${Date.now()}`,
         player1: player1.trim(),
         player2: player2.trim(),
         score1: s1,
         score2: s2,
-        winner,
         date,
       };
 
@@ -77,19 +78,20 @@ export default function GameForm({ onGameAdded }) {
       </div>
 
       <div className="form-content">
-        {/* Player 1 Input */}
+        {/* Player 1 Dropdown */}
         <div className="form-group">
           <label htmlFor="player1" className="form-label">Spieler 1</label>
-          <input
+          <select
             id="player1"
-            type="text"
-            placeholder="z.B. Janis"
             value={player1}
             onChange={(e) => setPlayer1(e.target.value)}
             disabled={loading}
             className="form-input"
-            autoComplete="off"
-          />
+          >
+            {PLAYERS.map(p => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
         </div>
 
         {/* Score Row */}
@@ -129,19 +131,20 @@ export default function GameForm({ onGameAdded }) {
           </div>
         </div>
 
-        {/* Player 2 Input */}
+        {/* Player 2 Dropdown */}
         <div className="form-group">
           <label htmlFor="player2" className="form-label">Spieler 2</label>
-          <input
+          <select
             id="player2"
-            type="text"
-            placeholder="z.B. Nicola"
             value={player2}
             onChange={(e) => setPlayer2(e.target.value)}
             disabled={loading}
             className="form-input"
-            autoComplete="off"
-          />
+          >
+            {PLAYERS.map(p => (
+              <option key={p} value={p}>{p}</option>
+            ))}
+          </select>
         </div>
 
         {/* Date Input */}
