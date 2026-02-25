@@ -149,3 +149,4 @@ Your Tischtennis Tracker is live! Share the Netlify URL with players and start l
 ---
 
 Need help? Check README.md for architecture details.
+# GitHub Pages Deploy Wed Feb 25 11:06:27 AM UTC 2026
