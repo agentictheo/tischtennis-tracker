@@ -1,33 +1,47 @@
-// Supabase temporarily disabled to fix loading issue
+import { createClient } from '@supabase/supabase-js';
+
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
+const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
 let supabase = null;
+
+try {
+  if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes('dummy')) {
+    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+} catch (e) {
+  console.warn('Supabase not configured, using localStorage');
+}
 
 // Fallback: localStorage-based data management
 const DB_KEY = 'tischtennis_games';
 
-// Wrapper mit Timeout
-const withTimeout = (promise, ms = 5000) => {
-  return Promise.race([
-    promise,
-    new Promise((_, reject) => 
-      setTimeout(() => reject(new Error('Request timeout')), ms)
-    )
-  ]);
-};
+
 
 export const getGames = async () => {
+  // Return localStorage immediately
+  const localData = JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+  
+  // Try to sync with Supabase in background
   if (supabase) {
     try {
-      const { data, error } = await withTimeout(
-        supabase.from('games').select('*').order('date', { ascending: false })
-      );
-      if (error) throw error;
-      return data || [];
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      
+      const { data, error } = await supabase.from('games').select('*').order('date', { ascending: false });
+      clearTimeout(timeout);
+      
+      if (!error && data) {
+        // Update localStorage with fresh data
+        localStorage.setItem(DB_KEY, JSON.stringify(data));
+        return data;
+      }
     } catch (error) {
-      console.warn('Supabase failed, using localStorage:', error.message);
-      return JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+      console.warn('Supabase sync failed:', error.message);
     }
   }
-  return JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+  
+  return localData;
 };
 
 export const saveGame = async (game) => {
@@ -66,19 +80,29 @@ export const deleteGame = async (id) => {
 const FIFA_DB_KEY = 'fifa_games';
 
 export const getFifaGames = async () => {
+  // Return localStorage immediately
+  const localData = JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
+  
+  // Try to sync with Supabase in background
   if (supabase) {
     try {
-      const { data, error } = await withTimeout(
-        supabase.from('fifa_games').select('*').order('date', { ascending: false })
-      );
-      if (error) throw error;
-      return data || [];
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 3000);
+      
+      const { data, error } = await supabase.from('fifa_games').select('*').order('date', { ascending: false });
+      clearTimeout(timeout);
+      
+      if (!error && data) {
+        // Update localStorage with fresh data
+        localStorage.setItem(FIFA_DB_KEY, JSON.stringify(data));
+        return data;
+      }
     } catch (error) {
-      console.warn('Supabase failed, using localStorage:', error.message);
-      return JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
+      console.warn('Supabase sync failed:', error.message);
     }
   }
-  return JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
+  
+  return localData;
 };
 
 export const saveFifaGame = async (game) => {
