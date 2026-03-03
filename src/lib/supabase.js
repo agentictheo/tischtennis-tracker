@@ -16,11 +16,28 @@ try {
 // Fallback: localStorage-based data management
 const DB_KEY = 'tischtennis_games';
 
+// Wrapper mit Timeout
+const withTimeout = (promise, ms = 5000) => {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error('Request timeout')), ms)
+    )
+  ]);
+};
+
 export const getGames = async () => {
   if (supabase) {
-    const { data, error } = await supabase.from('games').select('*').order('date', { ascending: false });
-    if (error) throw error;
-    return data || [];
+    try {
+      const { data, error } = await withTimeout(
+        supabase.from('games').select('*').order('date', { ascending: false })
+      );
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.warn('Supabase failed, using localStorage:', error.message);
+      return JSON.parse(localStorage.getItem(DB_KEY) || '[]');
+    }
   }
   return JSON.parse(localStorage.getItem(DB_KEY) || '[]');
 };
@@ -62,9 +79,16 @@ const FIFA_DB_KEY = 'fifa_games';
 
 export const getFifaGames = async () => {
   if (supabase) {
-    const { data, error } = await supabase.from('fifa_games').select('*').order('date', { ascending: false });
-    if (error) throw error;
-    return data || [];
+    try {
+      const { data, error } = await withTimeout(
+        supabase.from('fifa_games').select('*').order('date', { ascending: false })
+      );
+      if (error) throw error;
+      return data || [];
+    } catch (error) {
+      console.warn('Supabase failed, using localStorage:', error.message);
+      return JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
+    }
   }
   return JSON.parse(localStorage.getItem(FIFA_DB_KEY) || '[]');
 };
