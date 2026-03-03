@@ -1,17 +1,5 @@
-import { createClient } from '@supabase/supabase-js';
-
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
+// Supabase temporarily disabled to fix loading issue
 let supabase = null;
-
-try {
-  if (SUPABASE_URL && SUPABASE_KEY && !SUPABASE_URL.includes('dummy')) {
-    supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-  }
-} catch (e) {
-  console.warn('Supabase not configured, using localStorage');
-}
 
 // Fallback: localStorage-based data management
 const DB_KEY = 'tischtennis_games';
