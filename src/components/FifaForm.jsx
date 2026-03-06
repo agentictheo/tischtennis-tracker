@@ -5,7 +5,6 @@ import './GameForm.css';
 const PLAYERS = ['Nicola', 'Janis'];
 
 export default function FifaForm({ onGameAdded }) {
-  const [winner, setWinner] = useState(null);
   const [score1, setScore1] = useState('');
   const [score2, setScore2] = useState('');
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -13,19 +12,10 @@ export default function FifaForm({ onGameAdded }) {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const getLoser = () => {
-    return winner === 'Nicola' ? 'Janis' : 'Nicola';
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess(false);
-
-    if (!winner) {
-      setError('Bitte wähle einen Spieler aus');
-      return;
-    }
 
     if (score1 === '' || score2 === '') {
       setError('Bitte gib die Scores für beide Spieler ein');
@@ -47,19 +37,19 @@ export default function FifaForm({ onGameAdded }) {
 
     setLoading(true);
     try {
-      const loser = getLoser();
+      // Winner is whoever has more score
+      const gameWinner = s1 > s2 ? 'Nicola' : 'Janis';
       const game = {
         id: `game-${Date.now()}`,
-        player1: winner,
-        player2: loser,
-        score1: winner === 'Nicola' ? s1 : s2,
-        score2: winner === 'Janis' ? s1 : s2,
+        player1: gameWinner,
+        player2: gameWinner === 'Nicola' ? 'Janis' : 'Nicola',
+        score1: s1,
+        score2: s2,
         date,
       };
 
       await saveFifaGame(game);
       setSuccess(true);
-      setWinner(null);
       setScore1('');
       setScore2('');
       setDate(new Date().toISOString().split('T')[0]);
@@ -72,8 +62,6 @@ export default function FifaForm({ onGameAdded }) {
       setLoading(false);
     }
   };
-
-  const loser = getLoser();
 
   return (
     <form onSubmit={handleSubmit} className="game-form">
