@@ -8,9 +8,14 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
 dist-ssr
 *.local
+
+# Root index.html (use dist/index.html instead)
+/index.html
+
+# IMPORTANT: Do NOT ignore dist/ — GitHub Pages reads it directly
+# dist/ is committed to ensure reliable deployment
 
 # Editor directories and files
 .vscode/*
